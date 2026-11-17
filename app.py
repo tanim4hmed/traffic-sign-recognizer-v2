@@ -1,16 +1,19 @@
+```python
 import streamlit as st
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from torchvision.models import resnet18
 from torchvision import transforms
+from torchvision.models import resnet18
 from huggingface_hub import hf_hub_download
 from PIL import Image
+import numpy as np
+import os
 
 
-# =========================
+# =========================================================
 # PAGE CONFIG
-# =========================
+# =========================================================
 
 st.set_page_config(
     page_title="Traffic Sign Recognizer",
@@ -19,19 +22,72 @@ st.set_page_config(
 )
 
 
-# =========================
-# CONFIGURATION
-# =========================
+# =========================================================
+# CUSTOM CSS
+# =========================================================
 
-MODEL_REPO = "tanim4hmed/traffic-sign-recognizer-v2"
-MODEL_FILE = "traffic_sign_resnet18_final.pth"
+st.markdown("""
+<style>
 
-CONFIDENCE_THRESHOLD = 70.0
+.main-title {
+    text-align: center;
+    font-size: 42px;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+.subtitle {
+    text-align: center;
+    font-size: 18px;
+    color: #777;
+    margin-bottom: 30px;
+}
+
+.result-known {
+    padding: 20px;
+    border-radius: 15px;
+    border: 2px solid #28a745;
+    background-color: #f0fff4;
+    margin-top: 20px;
+}
+
+.result-unknown {
+    padding: 20px;
+    border-radius: 15px;
+    border: 2px solid #dc3545;
+    background-color: #fff5f5;
+    margin-top: 20px;
+}
+
+.info-card {
+    padding: 15px;
+    border-radius: 12px;
+    background-color: #f7f7f7;
+    margin-top: 15px;
+}
+
+</style>
+""", unsafe_allow_html=True)
 
 
-# =========================
+# =========================================================
+# TITLE
+# =========================================================
+
+st.markdown(
+    '<div class="main-title">🚦 Traffic Sign Recognizer</div>',
+    unsafe_allow_html=True
+)
+
+st.markdown(
+    '<div class="subtitle">AI-powered recognition using ResNet18 • 43 GTSRB classes</div>',
+    unsafe_allow_html=True
+)
+
+
+# =========================================================
 # GTSRB CLASS NAMES
-# =========================
+# =========================================================
 
 CLASS_NAMES = [
     "Speed limit (20 km/h)",
@@ -80,30 +136,28 @@ CLASS_NAMES = [
 ]
 
 
-# =========================
-# IMAGE TRANSFORMATION
-# =========================
+# =========================================================
+# SETTINGS
+# =========================================================
 
-transform = transforms.Compose([
-    transforms.Resize((224, 224)),
-    transforms.ToTensor(),
-    transforms.Normalize(
-        [0.485, 0.456, 0.406],
-        [0.229, 0.224, 0.225]
-    )
-])
+SIMILARITY_THRESHOLD = 0.90
+CONFIDENCE_THRESHOLD = 70.0
+
+device = torch.device(
+    "cuda" if torch.cuda.is_available() else "cpu"
+)
 
 
-# =========================
+# =========================================================
 # LOAD MODEL
-# =========================
+# =========================================================
 
 @st.cache_resource
 def load_model():
 
     model_path = hf_hub_download(
-        repo_id=MODEL_REPO,
-        filename=MODEL_FILE,
+        repo_id="tanim4hmed/traffic-sign-recognizer-v2",
+        filename="traffic_sign_resnet18_final.pth",
         repo_type="model"
     )
 
@@ -117,22 +171,90 @@ def load_model():
     model.load_state_dict(
         torch.load(
             model_path,
-            map_location="cpu"
+            map_location=device
         )
     )
 
+    model = model.to(device)
     model.eval()
 
     return model
 
 
-# =========================
+# =========================================================
+# LOAD PROTOTYPES
+# =========================================================
+
+@st.cache_data
+def load_prototypes():
+
+    prototype_path = "traffic_sign_prototypes.npz"
+
+    if not os.path.exists(prototype_path):
+        return None
+
+    data = np.load(prototype_path)
+
+    return data["prototypes"]
+
+
+# =========================================================
+# PREPROCESSING
+# =========================================================
+
+transform = transforms.Compose([
+    transforms.Resize((224, 224)),
+    transforms.ToTensor(),
+    transforms.Normalize(
+        [0.485, 0.456, 0.406],
+        [0.229, 0.224, 0.225]
+    )
+])
+
+
+# =========================================================
+# FEATURE EXTRACTION
+# =========================================================
+
+def extract_feature(model, image):
+
+    image_tensor = transform(
+        image
+    ).unsqueeze(0).to(device)
+
+    with torch.no_grad():
+
+        x = model.conv1(image_tensor)
+        x = model.bn1(x)
+        x = model.relu(x)
+        x = model.maxpool(x)
+
+        x = model.layer1(x)
+        x = model.layer2(x)
+        x = model.layer3(x)
+        x = model.layer4(x)
+
+        x = model.avgpool(x)
+        feature = torch.flatten(x, 1)
+
+        feature = F.normalize(
+            feature,
+            p=2,
+            dim=1
+        )
+
+    return feature.cpu().numpy()[0]
+
+
+# =========================================================
 # PREDICTION
-# =========================
+# =========================================================
 
-def predict(image, model):
+def predict(model, image, prototypes):
 
-    image_tensor = transform(image).unsqueeze(0)
+    image_tensor = transform(
+        image
+    ).unsqueeze(0).to(device)
 
     with torch.no_grad():
 
@@ -148,112 +270,256 @@ def predict(image, model):
         dim=1
     )
 
+    confidence = confidence.item() * 100
+    predicted_class = predicted_class.item()
+
+    # -----------------------------
+    # Top 5 predictions
+    # -----------------------------
+
     top5_prob, top5_classes = torch.topk(
         probabilities,
         5,
         dim=1
     )
 
-    return (
-        predicted_class.item(),
-        confidence.item() * 100,
-        top5_classes[0].tolist(),
-        top5_prob[0].tolist()
+    top5 = []
+
+    for prob, class_id in zip(
+        top5_prob[0].cpu().tolist(),
+        top5_classes[0].cpu().tolist()
+    ):
+
+        top5.append({
+            "class_id": class_id,
+            "name": CLASS_NAMES[class_id],
+            "confidence": prob * 100
+        })
+
+    # -----------------------------
+    # Feature similarity
+    # -----------------------------
+
+    feature = extract_feature(
+        model,
+        image
     )
 
+    similarities = np.dot(
+        prototypes,
+        feature
+    )
 
-# =========================
-# USER INTERFACE
-# =========================
+    closest_class = int(
+        np.argmax(similarities)
+    )
 
-st.title("🚦 Traffic Sign Recognizer")
+    similarity = float(
+        similarities[closest_class]
+    )
 
-st.write(
-    "Upload a traffic sign image and the AI model "
-    "will identify the sign."
-)
+    # -----------------------------
+    # Final decision
+    # -----------------------------
 
-st.info(
-    "Model: ResNet18 | "
-    "GTSRB Dataset | "
-    "43 Traffic Sign Classes"
+    is_known = (
+        confidence >= CONFIDENCE_THRESHOLD
+        and similarity >= SIMILARITY_THRESHOLD
+    )
+
+    return {
+        "predicted_class": predicted_class,
+        "confidence": confidence,
+        "closest_class": closest_class,
+        "similarity": similarity,
+        "is_known": is_known,
+        "top5": top5
+    }
+
+
+# =========================================================
+# LOAD MODEL
+# =========================================================
+
+with st.spinner("Loading AI model..."):
+    model = load_model()
+
+prototypes = load_prototypes()
+
+
+# =========================================================
+# FILE UPLOAD
+# =========================================================
+
+st.markdown(
+    "### 📤 Upload a traffic sign image"
 )
 
 uploaded_file = st.file_uploader(
-    "📷 Upload a traffic sign image",
-    type=["jpg", "jpeg", "png"]
+    "Choose an image",
+    type=["jpg", "jpeg", "png"],
+    help="Upload a clear traffic sign image."
 )
 
 
-if uploaded_file is not None:
+# =========================================================
+# IMAGE + PREDICTION
+# =========================================================
 
-    image = Image.open(uploaded_file).convert("RGB")
+if uploaded_file:
+
+    image = Image.open(
+        uploaded_file
+    ).convert("RGB")
 
     st.image(
         image,
-        caption="Uploaded Image",
+        caption="Uploaded image",
         use_container_width=True
     )
 
-    if st.button("🔍 Recognize Traffic Sign"):
+    st.markdown("---")
 
-        with st.spinner("Analyzing image..."):
+    if prototypes is None:
 
-            model = load_model()
-
-            predicted_class, confidence, top5_classes, top5_probs = predict(
-                image,
-                model
-            )
-
-        st.divider()
-
-        st.subheader("Prediction")
-
-        st.success(
-            f"🚦 {CLASS_NAMES[predicted_class]}"
+        st.error(
+            "Prototype file is missing. "
+            "Please make sure "
+            "`traffic_sign_prototypes.npz` "
+            "is included in the GitHub repository."
         )
 
-        st.metric(
-            "Confidence",
-            f"{confidence:.2f}%"
-        )
+    else:
 
-        if confidence >= CONFIDENCE_THRESHOLD:
-
-            st.success(
-                "✅ Traffic sign recognized successfully!"
-            )
-
-        else:
-
-            st.warning(
-                "⚠️ Model is not confident enough. "
-                "Try another image."
-            )
-
-        st.subheader("Top 5 Predictions")
-
-        for class_id, probability in zip(
-            top5_classes,
-            top5_probs
+        if st.button(
+            "🔍 Recognize Traffic Sign",
+            use_container_width=True
         ):
 
-            percentage = probability * 100
+            with st.spinner(
+                "Analyzing image..."
+            ):
 
-            st.write(
-                f"**{CLASS_NAMES[class_id]}** — "
-                f"{percentage:.2f}%"
+                result = predict(
+                    model,
+                    image,
+                    prototypes
+                )
+
+            # =================================================
+            # UNKNOWN SIGN
+            # =================================================
+
+            if not result["is_known"]:
+
+                st.markdown(
+                    f"""
+                    <div class="result-unknown">
+                        <h2>⚠️ Unknown Sign</h2>
+                        <p>
+                        This image is not confidently recognized
+                        as one of the 43 GTSRB traffic-sign classes.
+                        </p>
+                    </div>
+                    """,
+                    unsafe_allow_html=True
+                )
+
+                col1, col2 = st.columns(2)
+
+                with col1:
+
+                    st.metric(
+                        "Model Confidence",
+                        f"{result['confidence']:.2f}%"
+                    )
+
+                with col2:
+
+                    st.metric(
+                        "Feature Similarity",
+                        f"{result['similarity']:.4f}"
+                    )
+
+                st.info(
+                    "The model's highest prediction was "
+                    f"**{CLASS_NAMES[result['predicted_class']]}**, "
+                    "but the feature similarity was below "
+                    "the unknown-sign threshold."
+                )
+
+            # =================================================
+            # KNOWN SIGN
+            # =================================================
+
+            else:
+
+                predicted_name = CLASS_NAMES[
+                    result["predicted_class"]
+                ]
+
+                st.markdown(
+                    f"""
+                    <div class="result-known">
+                        <h2>✅ Traffic Sign Recognized</h2>
+                        <h3>{predicted_name}</h3>
+                    </div>
+                    """,
+                    unsafe_allow_html=True
+                )
+
+                col1, col2 = st.columns(2)
+
+                with col1:
+
+                    st.metric(
+                        "Confidence",
+                        f"{result['confidence']:.2f}%"
+                    )
+
+                with col2:
+
+                    st.metric(
+                        "Feature Similarity",
+                        f"{result['similarity']:.4f}"
+                    )
+
+            # =================================================
+            # TOP 5
+            # =================================================
+
+            st.markdown(
+                "### 📊 Top 5 Predictions"
             )
 
-            st.progress(
-                min(int(percentage), 100)
-            )
+            for item in result["top5"]:
+
+                st.write(
+                    f"**{item['name']}** — "
+                    f"{item['confidence']:.2f}%"
+                )
+
+                st.progress(
+                    min(
+                        int(item["confidence"]),
+                        100
+                    )
+                )
 
 
-st.divider()
+# =========================================================
+# FOOTER
+# =========================================================
 
-st.caption(
-    "Traffic Sign Recognition System | "
-    "ResNet18 trained on GTSRB"
+st.markdown("---")
+
+st.markdown(
+    """
+    <div style="text-align:center; color:#888;">
+        <p><b>Traffic Sign Recognizer V2</b></p>
+        <p>ResNet18 • GTSRB • 43 Classes</p>
+    </div>
+    """,
+    unsafe_allow_html=True
 )
+```
