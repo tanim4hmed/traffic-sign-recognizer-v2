@@ -1,4 +1,3 @@
-```python
 import streamlit as st
 import torch
 import torch.nn as nn
@@ -16,7 +15,7 @@ import os
 # =========================================================
 
 st.set_page_config(
-    page_title="Traffic Sign Recognizer",
+    page_title="Traffic Sign Recognizer V2",
     page_icon="🚦",
     layout="centered"
 )
@@ -57,13 +56,6 @@ st.markdown("""
     border: 2px solid #dc3545;
     background-color: #fff5f5;
     margin-top: 20px;
-}
-
-.info-card {
-    padding: 15px;
-    border-radius: 12px;
-    background-color: #f7f7f7;
-    margin-top: 15px;
 }
 
 </style>
@@ -168,12 +160,13 @@ def load_model():
         43
     )
 
-    model.load_state_dict(
-        torch.load(
-            model_path,
-            map_location=device
-        )
+    state_dict = torch.load(
+        model_path,
+        map_location=device,
+        weights_only=True
     )
+
+    model.load_state_dict(state_dict)
 
     model = model.to(device)
     model.eval()
@@ -199,7 +192,7 @@ def load_prototypes():
 
 
 # =========================================================
-# PREPROCESSING
+# IMAGE TRANSFORMATION
 # =========================================================
 
 transform = transforms.Compose([
@@ -235,7 +228,11 @@ def extract_feature(model, image):
         x = model.layer4(x)
 
         x = model.avgpool(x)
-        feature = torch.flatten(x, 1)
+
+        feature = torch.flatten(
+            x,
+            1
+        )
 
         feature = F.normalize(
             feature,
@@ -273,10 +270,7 @@ def predict(model, image, prototypes):
     confidence = confidence.item() * 100
     predicted_class = predicted_class.item()
 
-    # -----------------------------
     # Top 5 predictions
-    # -----------------------------
-
     top5_prob, top5_classes = torch.topk(
         probabilities,
         5,
@@ -291,15 +285,11 @@ def predict(model, image, prototypes):
     ):
 
         top5.append({
-            "class_id": class_id,
             "name": CLASS_NAMES[class_id],
             "confidence": prob * 100
         })
 
-    # -----------------------------
     # Feature similarity
-    # -----------------------------
-
     feature = extract_feature(
         model,
         image
@@ -318,10 +308,7 @@ def predict(model, image, prototypes):
         similarities[closest_class]
     )
 
-    # -----------------------------
     # Final decision
-    # -----------------------------
-
     is_known = (
         confidence >= CONFIDENCE_THRESHOLD
         and similarity >= SIMILARITY_THRESHOLD
@@ -338,22 +325,21 @@ def predict(model, image, prototypes):
 
 
 # =========================================================
-# LOAD MODEL
+# LOAD MODEL AND PROTOTYPES
 # =========================================================
 
 with st.spinner("Loading AI model..."):
+
     model = load_model()
 
 prototypes = load_prototypes()
 
 
 # =========================================================
-# FILE UPLOAD
+# UPLOAD IMAGE
 # =========================================================
 
-st.markdown(
-    "### 📤 Upload a traffic sign image"
-)
+st.markdown("### 📤 Upload a Traffic Sign")
 
 uploaded_file = st.file_uploader(
     "Choose an image",
@@ -363,7 +349,7 @@ uploaded_file = st.file_uploader(
 
 
 # =========================================================
-# IMAGE + PREDICTION
+# PROCESS IMAGE
 # =========================================================
 
 if uploaded_file:
@@ -374,7 +360,7 @@ if uploaded_file:
 
     st.image(
         image,
-        caption="Uploaded image",
+        caption="Uploaded Traffic Sign",
         use_container_width=True
     )
 
@@ -384,9 +370,8 @@ if uploaded_file:
 
         st.error(
             "Prototype file is missing. "
-            "Please make sure "
-            "`traffic_sign_prototypes.npz` "
-            "is included in the GitHub repository."
+            "Please add traffic_sign_prototypes.npz "
+            "to the GitHub repository."
         )
 
     else:
@@ -396,9 +381,7 @@ if uploaded_file:
             use_container_width=True
         ):
 
-            with st.spinner(
-                "Analyzing image..."
-            ):
+            with st.spinner("Analyzing image..."):
 
                 result = predict(
                     model,
@@ -413,12 +396,12 @@ if uploaded_file:
             if not result["is_known"]:
 
                 st.markdown(
-                    f"""
+                    """
                     <div class="result-unknown">
                         <h2>⚠️ Unknown Sign</h2>
                         <p>
-                        This image is not confidently recognized
-                        as one of the 43 GTSRB traffic-sign classes.
+                        This sign is not confidently recognized
+                        as one of the 43 GTSRB classes.
                         </p>
                     </div>
                     """,
@@ -444,8 +427,8 @@ if uploaded_file:
                 st.info(
                     "The model's highest prediction was "
                     f"**{CLASS_NAMES[result['predicted_class']]}**, "
-                    "but the feature similarity was below "
-                    "the unknown-sign threshold."
+                    "but the sign did not sufficiently match "
+                    "the known GTSRB classes."
                 )
 
             # =================================================
@@ -485,12 +468,10 @@ if uploaded_file:
                     )
 
             # =================================================
-            # TOP 5
+            # TOP 5 PREDICTIONS
             # =================================================
 
-            st.markdown(
-                "### 📊 Top 5 Predictions"
-            )
+            st.markdown("### 📊 Top 5 Predictions")
 
             for item in result["top5"]:
 
@@ -523,3 +504,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 ```
+
+**Important:** after pasting, the **first line must literally be** `import streamlit as st`. There must be no ` ```python ` before it and no ` ``` ` after it.
+
+Then **Commit changes** in GitHub and let Streamlit redeploy.
