@@ -9,25 +9,14 @@ from PIL import Image
 import numpy as np
 import os
 
-
-# =========================================================
-# PAGE CONFIG
-# =========================================================
-
 st.set_page_config(
     page_title="Traffic Sign Recognizer V2",
     page_icon="🚦",
     layout="centered"
 )
 
-
-# =========================================================
-# CUSTOM CSS
-# =========================================================
-
 st.markdown("""
 <style>
-
 .main-title {
     text-align: center;
     font-size: 42px;
@@ -57,14 +46,8 @@ st.markdown("""
     background-color: #fff5f5;
     margin-top: 20px;
 }
-
 </style>
 """, unsafe_allow_html=True)
-
-
-# =========================================================
-# TITLE
-# =========================================================
 
 st.markdown(
     '<div class="main-title">🚦 Traffic Sign Recognizer</div>',
@@ -75,11 +58,6 @@ st.markdown(
     '<div class="subtitle">AI-powered recognition using ResNet18 • 43 GTSRB classes</div>',
     unsafe_allow_html=True
 )
-
-
-# =========================================================
-# GTSRB CLASS NAMES
-# =========================================================
 
 CLASS_NAMES = [
     "Speed limit (20 km/h)",
@@ -127,26 +105,15 @@ CLASS_NAMES = [
     "End of no passing by vehicles over 3.5 metric tons"
 ]
 
-
-# =========================================================
-# SETTINGS
-# =========================================================
-
-SIMILARITY_THRESHOLD = 0.90
 CONFIDENCE_THRESHOLD = 70.0
+SIMILARITY_THRESHOLD = 0.90
 
 device = torch.device(
     "cuda" if torch.cuda.is_available() else "cpu"
 )
 
-
-# =========================================================
-# LOAD MODEL
-# =========================================================
-
 @st.cache_resource
 def load_model():
-
     model_path = hf_hub_download(
         repo_id="tanim4hmed/traffic-sign-recognizer-v2",
         filename="traffic_sign_resnet18_final.pth",
@@ -154,11 +121,7 @@ def load_model():
     )
 
     model = resnet18(weights=None)
-
-    model.fc = nn.Linear(
-        model.fc.in_features,
-        43
-    )
+    model.fc = nn.Linear(model.fc.in_features, 43)
 
     state_dict = torch.load(
         model_path,
@@ -167,33 +130,20 @@ def load_model():
     )
 
     model.load_state_dict(state_dict)
-
     model = model.to(device)
     model.eval()
 
     return model
 
-
-# =========================================================
-# LOAD PROTOTYPES
-# =========================================================
-
 @st.cache_data
 def load_prototypes():
+    path = "traffic_sign_prototypes.npz"
 
-    prototype_path = "traffic_sign_prototypes.npz"
-
-    if not os.path.exists(prototype_path):
+    if not os.path.exists(path):
         return None
 
-    data = np.load(prototype_path)
-
+    data = np.load(path)
     return data["prototypes"]
-
-
-# =========================================================
-# IMAGE TRANSFORMATION
-# =========================================================
 
 transform = transforms.Compose([
     transforms.Resize((224, 224)),
@@ -204,19 +154,10 @@ transform = transforms.Compose([
     )
 ])
 
-
-# =========================================================
-# FEATURE EXTRACTION
-# =========================================================
-
 def extract_feature(model, image):
-
-    image_tensor = transform(
-        image
-    ).unsqueeze(0).to(device)
+    image_tensor = transform(image).unsqueeze(0).to(device)
 
     with torch.no_grad():
-
         x = model.conv1(image_tensor)
         x = model.bn1(x)
         x = model.relu(x)
@@ -228,53 +169,27 @@ def extract_feature(model, image):
         x = model.layer4(x)
 
         x = model.avgpool(x)
-
-        feature = torch.flatten(
-            x,
-            1
-        )
-
-        feature = F.normalize(
-            feature,
-            p=2,
-            dim=1
-        )
+        feature = torch.flatten(x, 1)
+        feature = F.normalize(feature, p=2, dim=1)
 
     return feature.cpu().numpy()[0]
 
-
-# =========================================================
-# PREDICTION
-# =========================================================
-
 def predict(model, image, prototypes):
-
-    image_tensor = transform(
-        image
-    ).unsqueeze(0).to(device)
+    image_tensor = transform(image).unsqueeze(0).to(device)
 
     with torch.no_grad():
-
         outputs = model(image_tensor)
-
-        probabilities = F.softmax(
-            outputs,
-            dim=1
-        )
+        probabilities = F.softmax(outputs, dim=1)
 
     confidence, predicted_class = torch.max(
-        probabilities,
-        dim=1
+        probabilities, dim=1
     )
 
     confidence = confidence.item() * 100
     predicted_class = predicted_class.item()
 
-    # Top 5 predictions
     top5_prob, top5_classes = torch.topk(
-        probabilities,
-        5,
-        dim=1
+        probabilities, 5, dim=1
     )
 
     top5 = []
@@ -283,32 +198,18 @@ def predict(model, image, prototypes):
         top5_prob[0].cpu().tolist(),
         top5_classes[0].cpu().tolist()
     ):
-
         top5.append({
             "name": CLASS_NAMES[class_id],
             "confidence": prob * 100
         })
 
-    # Feature similarity
-    feature = extract_feature(
-        model,
-        image
-    )
+    feature = extract_feature(model, image)
 
-    similarities = np.dot(
-        prototypes,
-        feature
-    )
+    similarities = np.dot(prototypes, feature)
 
-    closest_class = int(
-        np.argmax(similarities)
-    )
+    closest_class = int(np.argmax(similarities))
+    similarity = float(similarities[closest_class])
 
-    similarity = float(
-        similarities[closest_class]
-    )
-
-    # Final decision
     is_known = (
         confidence >= CONFIDENCE_THRESHOLD
         and similarity >= SIMILARITY_THRESHOLD
@@ -323,21 +224,10 @@ def predict(model, image, prototypes):
         "top5": top5
     }
 
-
-# =========================================================
-# LOAD MODEL AND PROTOTYPES
-# =========================================================
-
 with st.spinner("Loading AI model..."):
-
     model = load_model()
 
 prototypes = load_prototypes()
-
-
-# =========================================================
-# UPLOAD IMAGE
-# =========================================================
 
 st.markdown("### 📤 Upload a Traffic Sign")
 
@@ -347,16 +237,9 @@ uploaded_file = st.file_uploader(
     help="Upload a clear traffic sign image."
 )
 
-
-# =========================================================
-# PROCESS IMAGE
-# =========================================================
-
 if uploaded_file:
 
-    image = Image.open(
-        uploaded_file
-    ).convert("RGB")
+    image = Image.open(uploaded_file).convert("RGB")
 
     st.image(
         image,
@@ -382,16 +265,11 @@ if uploaded_file:
         ):
 
             with st.spinner("Analyzing image..."):
-
                 result = predict(
                     model,
                     image,
                     prototypes
                 )
-
-            # =================================================
-            # UNKNOWN SIGN
-            # =================================================
 
             if not result["is_known"]:
 
@@ -411,14 +289,12 @@ if uploaded_file:
                 col1, col2 = st.columns(2)
 
                 with col1:
-
                     st.metric(
                         "Model Confidence",
                         f"{result['confidence']:.2f}%"
                     )
 
                 with col2:
-
                     st.metric(
                         "Feature Similarity",
                         f"{result['similarity']:.4f}"
@@ -430,10 +306,6 @@ if uploaded_file:
                     "but the sign did not sufficiently match "
                     "the known GTSRB classes."
                 )
-
-            # =================================================
-            # KNOWN SIGN
-            # =================================================
 
             else:
 
@@ -454,22 +326,16 @@ if uploaded_file:
                 col1, col2 = st.columns(2)
 
                 with col1:
-
                     st.metric(
                         "Confidence",
                         f"{result['confidence']:.2f}%"
                     )
 
                 with col2:
-
                     st.metric(
                         "Feature Similarity",
                         f"{result['similarity']:.4f}"
                     )
-
-            # =================================================
-            # TOP 5 PREDICTIONS
-            # =================================================
 
             st.markdown("### 📊 Top 5 Predictions")
 
@@ -481,16 +347,8 @@ if uploaded_file:
                 )
 
                 st.progress(
-                    min(
-                        int(item["confidence"]),
-                        100
-                    )
+                    min(int(item["confidence"]), 100)
                 )
-
-
-# =========================================================
-# FOOTER
-# =========================================================
 
 st.markdown("---")
 
@@ -503,8 +361,3 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
-```
-
-**Important:** after pasting, the **first line must literally be** `import streamlit as st`. There must be no ` ```python ` before it and no ` ``` ` after it.
-
-Then **Commit changes** in GitHub and let Streamlit redeploy.
