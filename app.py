@@ -12,7 +12,7 @@ from huggingface_hub import hf_hub_download
 
 
 # ============================================================
-# PAGE CONFIG
+# PAGE CONFIGURATION
 # ============================================================
 
 st.set_page_config(
@@ -24,7 +24,7 @@ st.set_page_config(
 
 
 # ============================================================
-# CONFIGURATION
+# SYSTEM SETTINGS
 # ============================================================
 
 HF_REPO = "tanim4hmed/traffic-sign-recognizer-v2"
@@ -34,7 +34,9 @@ PROTOTYPE_FILE = "traffic_sign_prototypes.npz"
 CONFIDENCE_THRESHOLD = 70.0
 SIMILARITY_THRESHOLD = 0.90
 
-DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+DEVICE = torch.device(
+    "cuda" if torch.cuda.is_available() else "cpu"
+)
 
 
 # ============================================================
@@ -89,26 +91,27 @@ CLASS_NAMES = [
 
 
 # ============================================================
-# PROFESSIONAL UI STYLING
+# CSS
 # ============================================================
 
-st.markdown(
+st.html(
     """
     <style>
 
-    /* Main background */
+    /* ========================================================
+       GLOBAL
+       ======================================================== */
+
     .stApp {
-        background-color: #f4f6f9;
+        background: #f3f5f8;
     }
 
-    /* Main width */
     .block-container {
-        max-width: 1450px;
-        padding-top: 1.5rem;
+        max-width: 1400px;
+        padding-top: 1.2rem;
         padding-bottom: 2rem;
     }
 
-    /* Hide Streamlit branding */
     #MainMenu {
         visibility: hidden;
     }
@@ -117,162 +120,200 @@ st.markdown(
         visibility: hidden;
     }
 
-    /* Header */
-    .main-header {
-        background-color: #102a43;
-        padding: 22px 28px;
+    /* ========================================================
+       HEADER
+       ======================================================== */
+
+    .ts-header {
+        background: #102a43;
         border-radius: 14px;
-        margin-bottom: 20px;
+        padding: 20px 25px;
+        margin-bottom: 18px;
+        box-shadow: 0 5px 18px rgba(16, 42, 67, 0.15);
+    }
+
+    .ts-header-title {
         color: white;
-        box-shadow: 0 5px 18px rgba(0, 0, 0, 0.12);
-    }
-
-    .header-title {
-        font-size: 30px;
+        font-size: 27px;
         font-weight: 800;
-        margin: 0;
+        line-height: 1.2;
     }
 
-    .header-subtitle {
+    .ts-header-subtitle {
         color: #d8e3ed;
-        font-size: 14px;
+        font-size: 13px;
         margin-top: 5px;
     }
 
-    /* Hero */
-    .hero-box {
+    /* ========================================================
+       HERO
+       ======================================================== */
+
+    .ts-hero {
         background: linear-gradient(
-            110deg,
-            #0c263f 0%,
-            #173d60 55%,
-            #31546a 100%
+            115deg,
+            #102a43 0%,
+            #173f63 55%,
+            #315c70 100%
         );
-        padding: 38px 42px;
         border-radius: 15px;
-        margin-bottom: 25px;
-        color: white;
-        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.13);
+        padding: 34px 38px;
+        margin-bottom: 24px;
+        box-shadow: 0 6px 20px rgba(16, 42, 67, 0.14);
     }
 
-    .hero-small {
+    .ts-hero-label {
         display: inline-block;
-        background-color: #e52b32;
-        padding: 6px 12px;
+        background: #df2d35;
+        color: white;
+        padding: 6px 11px;
         border-radius: 4px;
-        font-size: 12px;
+        font-size: 11px;
         font-weight: 800;
-        letter-spacing: 0.5px;
+        letter-spacing: 0.7px;
     }
 
-    .hero-title {
-        font-size: 40px;
+    .ts-hero-title {
+        color: white;
+        font-size: 38px;
         font-weight: 850;
         margin-top: 12px;
-        margin-bottom: 8px;
     }
 
-    .hero-description {
+    .ts-hero-text {
         color: #e1e9f0;
-        font-size: 16px;
-        max-width: 680px;
+        font-size: 15px;
         line-height: 1.55;
+        max-width: 700px;
+        margin-top: 7px;
     }
 
-    /* Section title */
-    .section-title {
-        font-size: 23px;
-        font-weight: 800;
+    /* ========================================================
+       SECTION
+       ======================================================== */
+
+    .ts-section-title {
         color: #152238;
-        margin-top: 5px;
+        font-size: 22px;
+        font-weight: 800;
         margin-bottom: 3px;
     }
 
-    .section-text {
-        color: #68788a;
-        font-size: 14px;
-        margin-bottom: 15px;
+    .ts-section-text {
+        color: #69798b;
+        font-size: 13px;
+        margin-bottom: 13px;
     }
 
-    /* Cards */
-    .card {
-        background-color: white;
+    /* ========================================================
+       CARD
+       ======================================================== */
+
+    .ts-card {
+        background: white;
         border: 1px solid #dce3ea;
         border-radius: 13px;
-        padding: 20px;
-        box-shadow: 0 4px 15px rgba(20, 42, 66, 0.06);
+        padding: 19px;
+        box-shadow: 0 3px 13px rgba(20, 42, 66, 0.055);
     }
 
-    .card-title {
+    .ts-card-title {
         color: #17385d;
-        font-size: 19px;
+        font-size: 18px;
         font-weight: 800;
         margin-bottom: 12px;
     }
 
-    /* Result heading */
-    .result-title {
+    /* ========================================================
+       RESULT
+       ======================================================== */
+
+    .ts-result-name {
         color: #152238;
         font-size: 25px;
         font-weight: 850;
+        line-height: 1.2;
     }
 
-    .result-subtitle {
-        color: #64748b;
-        font-size: 14px;
-        line-height: 1.5;
+    .ts-result-description {
+        color: #657588;
+        font-size: 13px;
+        line-height: 1.55;
+        margin-top: 7px;
     }
 
-    /* Metric styling */
-    [data-testid="stMetric"] {
-        background-color: #f8fafc;
-        border: 1px solid #dce3ea;
-        border-radius: 10px;
-        padding: 14px;
+    .ts-known {
+        border-left: 5px solid #22a45a;
+        background: #eef9f2;
+        padding: 14px 16px;
+        border-radius: 9px;
+        margin-bottom: 15px;
     }
 
-    [data-testid="stMetricLabel"] {
-        color: #64748b !important;
+    .ts-unknown {
+        border-left: 5px solid #df2d35;
+        background: #fff1f1;
+        padding: 14px 16px;
+        border-radius: 9px;
+        margin-bottom: 15px;
     }
 
-    [data-testid="stMetricValue"] {
-        color: #152238 !important;
+    .ts-status-known {
+        color: #168045;
+        font-size: 11px;
+        font-weight: 850;
+        letter-spacing: 0.7px;
+        margin-bottom: 6px;
     }
 
-    /* Buttons */
-    .stButton > button {
-        background-color: #e52b32;
-        color: white;
-        border: none;
-        border-radius: 8px;
-        font-weight: 800;
-        min-height: 45px;
+    .ts-status-unknown {
+        color: #c5232b;
+        font-size: 11px;
+        font-weight: 850;
+        letter-spacing: 0.7px;
+        margin-bottom: 6px;
     }
 
-    .stButton > button:hover {
-        background-color: #c92128;
-        color: white;
-    }
+    /* ========================================================
+       FOOTER
+       ======================================================== */
 
-    /* File uploader */
-    [data-testid="stFileUploader"] {
-        background-color: #f8fafc;
-        border-radius: 10px;
-    }
-
-    /* Footer */
-    .footer-box {
-        background-color: #102a43;
+    .ts-footer {
+        background: #102a43;
         color: #dbe5ee;
         text-align: center;
-        padding: 17px;
+        padding: 16px;
         border-radius: 12px;
-        margin-top: 30px;
-        font-size: 13px;
+        margin-top: 28px;
+        font-size: 12px;
+    }
+
+    .ts-footer strong {
+        color: white;
+    }
+
+    /* ========================================================
+       MOBILE
+       ======================================================== */
+
+    @media (max-width: 800px) {
+
+        .ts-hero {
+            padding: 27px 24px;
+        }
+
+        .ts-hero-title {
+            font-size: 29px;
+        }
+
+        .ts-header-title {
+            font-size: 21px;
+        }
+
     }
 
     </style>
-    """,
-    unsafe_allow_html=True
+    """
 )
 
 
@@ -280,57 +321,49 @@ st.markdown(
 # HEADER
 # ============================================================
 
-header_left, header_right = st.columns([5, 1])
-
-with header_left:
-    st.markdown(
-        """
-        <div class="main-header">
-            <div class="header-title">
-                🚦 Traffic Sign Recognition System
-            </div>
-            <div class="header-subtitle">
-                Road sign identification and classification system
-            </div>
+st.html(
+    """
+    <div class="ts-header">
+        <div class="ts-header-title">
+            🚦 Traffic Sign Recognition System
         </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-with header_right:
-    st.success("● System Online")
+        <div class="ts-header-subtitle">
+            Road sign identification and classification system
+        </div>
+    </div>
+    """
+)
 
 
 # ============================================================
 # HERO
 # ============================================================
 
-st.markdown(
+st.html(
     """
-    <div class="hero-box">
+    <div class="ts-hero">
 
-        <div class="hero-small">
+        <div class="ts-hero-label">
             TRAFFIC SAFETY SYSTEM
         </div>
 
-        <div class="hero-title">
+        <div class="ts-hero-title">
             Traffic Sign Inspection
         </div>
 
-        <div class="hero-description">
-            Upload a traffic sign image and identify its classification
-            using a trained ResNet18 recognition model with unknown-sign
-            detection.
+        <div class="ts-hero-text">
+            Upload a traffic sign image and identify its
+            classification using a trained ResNet18 recognition
+            model with unknown-sign detection.
         </div>
 
     </div>
-    """,
-    unsafe_allow_html=True
+    """
 )
 
 
 # ============================================================
-# MODEL
+# MODEL LOADING
 # ============================================================
 
 @st.cache_resource(show_spinner=False)
@@ -365,7 +398,7 @@ def load_model():
 
 
 # ============================================================
-# PROTOTYPES
+# PROTOTYPE LOADING
 # ============================================================
 
 @st.cache_data(show_spinner=False)
@@ -380,7 +413,7 @@ def load_prototypes():
 
 
 # ============================================================
-# IMAGE TRANSFORM
+# IMAGE TRANSFORMATION
 # ============================================================
 
 transform = transforms.Compose([
@@ -410,7 +443,11 @@ def extract_feature(model, image_tensor):
     x = model.layer4(x)
 
     x = model.avgpool(x)
-    x = torch.flatten(x, 1)
+
+    x = torch.flatten(
+        x,
+        1
+    )
 
     x = F.normalize(
         x,
@@ -433,7 +470,9 @@ def predict(model, image, prototypes):
 
     with torch.no_grad():
 
-        outputs = model(image_tensor)
+        outputs = model(
+            image_tensor
+        )
 
         probabilities = torch.softmax(
             outputs,
@@ -458,9 +497,7 @@ def predict(model, image, prototypes):
 
     predicted_class = predicted_class.item()
 
-    confidence = (
-        confidence.item() * 100
-    )
+    confidence = confidence.item() * 100
 
     top_probs = (
         top_probs[0]
@@ -516,50 +553,55 @@ def predict(model, image, prototypes):
 
 
 # ============================================================
-# MAIN SECTION
+# MAIN WORKSPACE
 # ============================================================
 
-left, right = st.columns(
+left_column, right_column = st.columns(
     [0.95, 1.05],
     gap="large"
 )
 
 
 # ============================================================
-# LEFT COLUMN - UPLOAD
+# LEFT SIDE
 # ============================================================
 
-with left:
+with left_column:
 
-    st.markdown(
-        '<div class="section-title">Traffic Sign Inspection</div>',
-        unsafe_allow_html=True
+    st.html(
+        """
+        <div class="ts-section-title">
+            Traffic Sign Inspection
+        </div>
+
+        <div class="ts-section-text">
+            Upload a clear road-sign image for classification.
+        </div>
+        """
     )
 
-    st.markdown(
-        '<div class="section-text">'
-        'Upload a clear image of a road traffic sign.'
-        '</div>',
-        unsafe_allow_html=True
-    )
-
-    st.markdown(
-        '<div class="card">',
-        unsafe_allow_html=True
-    )
-
-    st.markdown(
-        '<div class="card-title">📤 Upload Traffic Sign</div>',
-        unsafe_allow_html=True
+    st.html(
+        """
+        <div class="ts-card">
+            <div class="ts-card-title">
+                📤 Upload Traffic Sign
+            </div>
+        </div>
+        """
     )
 
     uploaded_file = st.file_uploader(
-        "Select image",
-        type=["jpg", "jpeg", "png"],
+        "Choose a traffic sign image",
+        type=[
+            "jpg",
+            "jpeg",
+            "png"
+        ],
         label_visibility="collapsed"
     )
 
     image = None
+    analyze_button = False
 
     if uploaded_file is not None:
 
@@ -567,15 +609,11 @@ with left:
             uploaded_file
         ).convert("RGB")
 
-        st.write("")
-
         st.image(
             image,
             caption="Uploaded Traffic Sign",
             use_container_width=True
         )
-
-        st.write("")
 
         analyze_button = st.button(
             "🔍 Analyze Traffic Sign",
@@ -585,80 +623,52 @@ with left:
     else:
 
         st.info(
-            "📷 Upload a JPG, JPEG, or PNG image "
-            "to begin traffic sign inspection."
+            "📷 Upload a JPG, JPEG, or PNG traffic sign image."
         )
 
-        analyze_button = False
-
-    st.markdown(
-        '</div>',
-        unsafe_allow_html=True
-    )
-
 
 # ============================================================
-# RIGHT COLUMN - RESULT
+# RIGHT SIDE
 # ============================================================
 
-with right:
+with right_column:
 
-    st.markdown(
-        '<div class="section-title">Detection Result</div>',
-        unsafe_allow_html=True
-    )
+    st.html(
+        """
+        <div class="ts-section-title">
+            Detection Result
+        </div>
 
-    st.markdown(
-        '<div class="section-text">'
-        'Classification and recognition analysis.'
-        '</div>',
-        unsafe_allow_html=True
+        <div class="ts-section-text">
+            Classification and recognition analysis.
+        </div>
+        """
     )
 
     if uploaded_file is None:
 
-        st.markdown(
-            '<div class="card">',
-            unsafe_allow_html=True
-        )
-
-        st.info(
-            "🔎 Waiting for an image. "
-            "Upload a traffic sign on the left."
-        )
-
-        st.markdown(
+        st.html(
             """
-            **Recognition workflow**
+            <div class="ts-card">
 
-            1. Upload a traffic sign image
-            2. Analyze the image
-            3. Compare model predictions
-            4. Check feature similarity
-            5. Return a recognized or unknown result
+                <div class="ts-card-title">
+                    🔎 Waiting for Image
+                </div>
+
+                <p>
+                    Upload a traffic sign image on the left
+                    to begin the inspection.
+                </p>
+
+            </div>
             """
-        )
-
-        st.markdown(
-            '</div>',
-            unsafe_allow_html=True
         )
 
     elif not analyze_button:
 
-        st.markdown(
-            '<div class="card">',
-            unsafe_allow_html=True
-        )
-
         st.info(
             "Image uploaded successfully. "
-            "Click **Analyze Traffic Sign** to start."
-        )
-
-        st.markdown(
-            '</div>',
-            unsafe_allow_html=True
+            "Click 'Analyze Traffic Sign' to continue."
         )
 
     else:
@@ -713,26 +723,26 @@ with right:
 
             if is_known:
 
-                st.success(
-                    "✓ RECOGNIZED TRAFFIC SIGN"
-                )
-
-                st.markdown(
+                st.html(
                     f"""
-                    <div class="card">
+                    <div class="ts-known">
 
-                    <div class="result-title">
-                        {CLASS_NAMES[predicted_class]}
-                    </div>
+                        <div class="ts-status-known">
+                            ✓ RECOGNIZED TRAFFIC SIGN
+                        </div>
 
-                    <div class="result-subtitle">
-                        The uploaded sign matches one of the
-                        supported GTSRB traffic sign classes.
-                    </div>
+                        <div class="ts-result-name">
+                            {CLASS_NAMES[predicted_class]}
+                        </div>
+
+                        <div class="ts-result-description">
+                            The uploaded sign matches one of
+                            the supported GTSRB traffic sign
+                            classes.
+                        </div>
 
                     </div>
-                    """,
-                    unsafe_allow_html=True
+                    """
                 )
 
             # ------------------------------------------------
@@ -745,78 +755,77 @@ with right:
                     closest_class
                 ]
 
-                st.warning(
-                    "⚠ UNKNOWN TRAFFIC SIGN"
-                )
-
-                st.markdown(
+                st.html(
                     f"""
-                    <div class="card">
+                    <div class="ts-unknown">
 
-                    <div class="result-title">
-                        Sign Not Recognized
-                    </div>
+                        <div class="ts-status-unknown">
+                            ⚠ UNKNOWN TRAFFIC SIGN
+                        </div>
 
-                    <div class="result-subtitle">
+                        <div class="ts-result-name">
+                            Sign Not Recognized
+                        </div>
 
-                        This sign could not be confidently
-                        matched with one of the 43 supported
-                        GTSRB traffic sign classes.
-
-                        <br><br>
-
-                        The model's highest prediction was
-                        <strong>{closest_name}</strong>,
-                        but the feature similarity was below
-                        the required recognition threshold.
-
-                    </div>
+                        <div class="ts-result-description">
+                            This sign could not be confidently
+                            matched with one of the 43 supported
+                            GTSRB traffic sign classes.
+                            <br><br>
+                            Highest model prediction:
+                            <strong>{closest_name}</strong>
+                        </div>
 
                     </div>
-                    """,
-                    unsafe_allow_html=True
+                    """
                 )
-
-            st.write("")
 
             # ------------------------------------------------
             # METRICS
             # ------------------------------------------------
 
-            m1, m2 = st.columns(2)
+            metric_a, metric_b = st.columns(2)
 
-            with m1:
+            with metric_a:
 
                 st.metric(
                     "Model Confidence",
                     f"{confidence:.2f}%",
-                    f"Required {CONFIDENCE_THRESHOLD:.0f}%"
+                    f"Threshold: {CONFIDENCE_THRESHOLD:.0f}%"
                 )
 
-            with m2:
+            with metric_b:
 
                 st.metric(
                     "Feature Similarity",
                     f"{similarity:.4f}",
-                    f"Required {SIMILARITY_THRESHOLD:.4f}"
+                    f"Threshold: {SIMILARITY_THRESHOLD:.4f}"
                 )
 
             st.write("")
 
             # ------------------------------------------------
+            # UNKNOWN DETAILS
+            # ------------------------------------------------
+
+            if not is_known:
+
+                st.info(
+                    f"Final decision: NOT RECOGNIZED  |  "
+                    f"Similarity {similarity:.4f} < "
+                    f"{SIMILARITY_THRESHOLD:.4f}"
+                )
+
+            # ------------------------------------------------
             # TOP 5 PREDICTIONS
             # ------------------------------------------------
 
-            st.markdown(
-                '<div class="card">',
-                unsafe_allow_html=True
-            )
-
-            st.markdown(
-                '<div class="card-title">'
-                '🏆 Top 5 Predictions'
-                '</div>',
-                unsafe_allow_html=True
+            st.html(
+                """
+                <div class="ts-card-title">
+                    🏆 Top 5 Predictions
+                </div>
+                """
             )
 
             for i in range(5):
@@ -834,31 +843,27 @@ with right:
                 ]
 
                 st.write(
-                    f"**{i + 1}. {name}**"
+                    f"**{i + 1}. {name}** — "
+                    f"{probability:.2f}%"
                 )
 
                 st.progress(
                     min(
                         probability / 100,
                         1.0
-                    ),
-                    text=f"{probability:.2f}%"
+                    )
                 )
-
-            st.markdown(
-                '</div>',
-                unsafe_allow_html=True
-            )
 
         except Exception as error:
 
             st.error(
-                "An error occurred while analyzing the image."
+                "Unable to analyze the image."
             )
 
             with st.expander(
                 "Technical details"
             ):
+
                 st.code(
                     str(error)
                 )
@@ -871,16 +876,16 @@ with right:
 st.write("")
 st.write("")
 
-st.markdown(
-    '<div class="section-title">System Information</div>',
-    unsafe_allow_html=True
-)
+st.html(
+    """
+    <div class="ts-section-title">
+        System Information
+    </div>
 
-st.markdown(
-    '<div class="section-text">'
-    'Technical information about the recognition system.'
-    '</div>',
-    unsafe_allow_html=True
+    <div class="ts-section-text">
+        Technical information about the recognition system.
+    </div>
+    """
 )
 
 info1, info2, info3, info4 = st.columns(4)
@@ -902,14 +907,14 @@ with info2:
 with info3:
 
     st.metric(
-        "Classes",
+        "Supported Classes",
         "43"
     )
 
 with info4:
 
     st.metric(
-        "Status",
+        "System Status",
         "Ready"
     )
 
@@ -918,17 +923,12 @@ with info4:
 # FOOTER
 # ============================================================
 
-st.markdown(
+st.html(
     """
-    <div class="footer-box">
-
+    <div class="ts-footer">
         <strong>Traffic Sign Recognition System</strong>
-
         &nbsp; | &nbsp;
-
         Safer Roads. Smarter Technology.
-
     </div>
-    """,
-    unsafe_allow_html=True
+    """
 )
