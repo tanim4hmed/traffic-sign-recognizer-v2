@@ -12,7 +12,7 @@ from huggingface_hub import hf_hub_download
 
 
 # ============================================================
-# PAGE CONFIGURATION
+# PAGE CONFIG
 # ============================================================
 
 st.set_page_config(
@@ -24,7 +24,7 @@ st.set_page_config(
 
 
 # ============================================================
-# SYSTEM SETTINGS
+# CONFIGURATION
 # ============================================================
 
 HF_REPO = "tanim4hmed/traffic-sign-recognizer-v2"
@@ -91,7 +91,7 @@ CLASS_NAMES = [
 
 
 # ============================================================
-# CSS
+# PROFESSIONAL CSS
 # ============================================================
 
 st.html(
@@ -99,17 +99,23 @@ st.html(
     <style>
 
     /* ========================================================
-       GLOBAL
+       PAGE
        ======================================================== */
 
     .stApp {
-        background: #f3f5f8;
+        background-color: #f3f5f8;
     }
 
+    /*
+       IMPORTANT:
+       Extra top padding keeps the application content
+       safely below Streamlit's top toolbar.
+    */
+
     .block-container {
-        max-width: 1400px;
-        padding-top: 1.2rem;
-        padding-bottom: 2rem;
+        max-width: 1400px !important;
+        padding-top: 6rem !important;
+        padding-bottom: 2rem !important;
     }
 
     #MainMenu {
@@ -120,36 +126,47 @@ st.html(
         visibility: hidden;
     }
 
+
     /* ========================================================
        HEADER
        ======================================================== */
 
     .ts-header {
-        background: #102a43;
+        width: 100%;
+        box-sizing: border-box;
+        background-color: #102a43;
         border-radius: 14px;
-        padding: 20px 25px;
-        margin-bottom: 18px;
-        box-shadow: 0 5px 18px rgba(16, 42, 67, 0.15);
+        padding: 24px 28px;
+        margin-top: 4px;
+        margin-bottom: 22px;
+        min-height: 100px;
+        box-shadow: 0 6px 20px rgba(16, 42, 67, 0.15);
     }
 
     .ts-header-title {
-        color: white;
-        font-size: 27px;
+        color: #ffffff;
+        font-size: 28px;
         font-weight: 800;
-        line-height: 1.2;
+        line-height: 1.35;
+        margin: 0;
+        padding: 0;
     }
 
     .ts-header-subtitle {
         color: #d8e3ed;
-        font-size: 13px;
-        margin-top: 5px;
+        font-size: 14px;
+        line-height: 1.4;
+        margin-top: 7px;
     }
+
 
     /* ========================================================
        HERO
        ======================================================== */
 
     .ts-hero {
+        width: 100%;
+        box-sizing: border-box;
         background: linear-gradient(
             115deg,
             #102a43 0%,
@@ -157,16 +174,16 @@ st.html(
             #315c70 100%
         );
         border-radius: 15px;
-        padding: 34px 38px;
-        margin-bottom: 24px;
-        box-shadow: 0 6px 20px rgba(16, 42, 67, 0.14);
+        padding: 38px 40px;
+        margin-bottom: 26px;
+        box-shadow: 0 7px 22px rgba(16, 42, 67, 0.14);
     }
 
     .ts-hero-label {
         display: inline-block;
-        background: #df2d35;
-        color: white;
-        padding: 6px 11px;
+        background-color: #df2d35;
+        color: #ffffff;
+        padding: 7px 12px;
         border-radius: 4px;
         font-size: 11px;
         font-weight: 800;
@@ -174,88 +191,84 @@ st.html(
     }
 
     .ts-hero-title {
-        color: white;
-        font-size: 38px;
+        color: #ffffff;
+        font-size: 40px;
         font-weight: 850;
-        margin-top: 12px;
+        line-height: 1.15;
+        margin-top: 14px;
     }
 
     .ts-hero-text {
-        color: #e1e9f0;
+        color: #e4ebf1;
         font-size: 15px;
-        line-height: 1.55;
-        max-width: 700px;
-        margin-top: 7px;
+        line-height: 1.6;
+        max-width: 720px;
+        margin-top: 9px;
     }
 
+
     /* ========================================================
-       SECTION
+       SECTION TITLES
        ======================================================== */
 
     .ts-section-title {
         color: #152238;
         font-size: 22px;
         font-weight: 800;
-        margin-bottom: 3px;
+        line-height: 1.3;
+        margin-bottom: 4px;
     }
 
     .ts-section-text {
         color: #69798b;
         font-size: 13px;
-        margin-bottom: 13px;
+        line-height: 1.5;
+        margin-bottom: 14px;
     }
 
+
     /* ========================================================
-       CARD
+       CARDS
        ======================================================== */
 
     .ts-card {
-        background: white;
+        background-color: #ffffff;
         border: 1px solid #dce3ea;
         border-radius: 13px;
-        padding: 19px;
-        box-shadow: 0 3px 13px rgba(20, 42, 66, 0.055);
+        padding: 20px;
+        box-shadow: 0 4px 15px rgba(20, 42, 66, 0.06);
+        margin-bottom: 14px;
     }
 
     .ts-card-title {
         color: #17385d;
         font-size: 18px;
         font-weight: 800;
-        margin-bottom: 12px;
+        line-height: 1.3;
+        margin-bottom: 10px;
     }
+
 
     /* ========================================================
        RESULT
        ======================================================== */
 
-    .ts-result-name {
-        color: #152238;
-        font-size: 25px;
-        font-weight: 850;
-        line-height: 1.2;
-    }
-
-    .ts-result-description {
-        color: #657588;
-        font-size: 13px;
-        line-height: 1.55;
-        margin-top: 7px;
-    }
-
     .ts-known {
+        background-color: #eef9f2;
+        border: 1px solid #c6e8d1;
         border-left: 5px solid #22a45a;
-        background: #eef9f2;
-        padding: 14px 16px;
-        border-radius: 9px;
-        margin-bottom: 15px;
+        border-radius: 10px;
+        padding: 16px 17px;
+        margin-bottom: 16px;
     }
 
     .ts-unknown {
+        background-color: #fff1f1;
+        border: 1px solid #f0c7c9;
         border-left: 5px solid #df2d35;
-        background: #fff1f1;
-        padding: 14px 16px;
-        border-radius: 9px;
-        margin-bottom: 15px;
+        border-radius: 10px;
+        padding: 16px 17px;
+        margin-bottom: 16px;
     }
 
     .ts-status-known {
@@ -274,23 +287,103 @@ st.html(
         margin-bottom: 6px;
     }
 
+    .ts-result-name {
+        color: #152238;
+        font-size: 25px;
+        font-weight: 850;
+        line-height: 1.25;
+    }
+
+    .ts-result-description {
+        color: #657588;
+        font-size: 13px;
+        line-height: 1.55;
+        margin-top: 7px;
+    }
+
+
+    /* ========================================================
+       METRICS
+       ======================================================== */
+
+    [data-testid="stMetric"] {
+        background-color: #ffffff;
+        border: 1px solid #dce3ea;
+        border-radius: 11px;
+        padding: 15px;
+        box-shadow: 0 3px 10px rgba(20, 42, 66, 0.04);
+    }
+
+    [data-testid="stMetricLabel"] {
+        color: #64748b !important;
+    }
+
+    [data-testid="stMetricValue"] {
+        color: #152238 !important;
+    }
+
+
+    /* ========================================================
+       BUTTON
+       ======================================================== */
+
+    .stButton > button {
+        width: 100%;
+        background-color: #df2d35;
+        color: #ffffff;
+        border: none;
+        border-radius: 8px;
+        min-height: 46px;
+        font-size: 15px;
+        font-weight: 800;
+        transition: 0.15s ease;
+    }
+
+    .stButton > button:hover {
+        background-color: #c9232b;
+        color: #ffffff;
+    }
+
+
+    /* ========================================================
+       FILE UPLOADER
+       ======================================================== */
+
+    [data-testid="stFileUploader"] {
+        background-color: #f8fafc;
+        border: 1px solid #dce3ea;
+        border-radius: 10px;
+        padding: 6px;
+    }
+
+
+    /* ========================================================
+       PROGRESS BAR
+       ======================================================== */
+
+    [data-testid="stProgressBar"] > div > div > div {
+        background-color: #2469c8;
+    }
+
+
     /* ========================================================
        FOOTER
        ======================================================== */
 
     .ts-footer {
-        background: #102a43;
+        background-color: #102a43;
         color: #dbe5ee;
         text-align: center;
-        padding: 16px;
+        padding: 17px;
         border-radius: 12px;
-        margin-top: 28px;
+        margin-top: 30px;
         font-size: 12px;
     }
 
     .ts-footer strong {
-        color: white;
+        color: #ffffff;
     }
+
 
     /* ========================================================
        MOBILE
@@ -298,18 +391,29 @@ st.html(
 
     @media (max-width: 800px) {
 
-        .ts-hero {
-            padding: 27px 24px;
+        .block-container {
+            padding-top: 5rem !important;
         }
 
-        .ts-hero-title {
-            font-size: 29px;
+        .ts-header {
+            padding: 21px;
         }
 
         .ts-header-title {
-            font-size: 21px;
+            font-size: 22px;
         }
 
+        .ts-hero {
+            padding: 28px 24px;
+        }
+
+        .ts-hero-title {
+            font-size: 30px;
+        }
+
+        .ts-hero-text {
+            font-size: 14px;
+        }
     }
 
     </style>
@@ -324,12 +428,15 @@ st.html(
 st.html(
     """
     <div class="ts-header">
+
         <div class="ts-header-title">
             🚦 Traffic Sign Recognition System
         </div>
+
         <div class="ts-header-subtitle">
             Road sign identification and classification system
         </div>
+
     </div>
     """
 )
@@ -407,13 +514,15 @@ def load_prototypes():
     if not os.path.exists(PROTOTYPE_FILE):
         return None
 
-    data = np.load(PROTOTYPE_FILE)
+    data = np.load(
+        PROTOTYPE_FILE
+    )
 
     return data["prototypes"]
 
 
 # ============================================================
-# IMAGE TRANSFORMATION
+# IMAGE TRANSFORM
 # ============================================================
 
 transform = transforms.Compose([
@@ -430,16 +539,27 @@ transform = transforms.Compose([
 # FEATURE EXTRACTION
 # ============================================================
 
-def extract_feature(model, image_tensor):
+def extract_feature(
+    model,
+    image_tensor
+):
 
-    x = model.conv1(image_tensor)
+    x = model.conv1(
+        image_tensor
+    )
+
     x = model.bn1(x)
+
     x = model.relu(x)
+
     x = model.maxpool(x)
 
     x = model.layer1(x)
+
     x = model.layer2(x)
+
     x = model.layer3(x)
+
     x = model.layer4(x)
 
     x = model.avgpool(x)
@@ -462,7 +582,11 @@ def extract_feature(model, image_tensor):
 # PREDICTION
 # ============================================================
 
-def predict(model, image, prototypes):
+def predict(
+    model,
+    image,
+    prototypes
+):
 
     image_tensor = transform(
         image
@@ -495,9 +619,13 @@ def predict(model, image, prototypes):
             image_tensor
         )
 
-    predicted_class = predicted_class.item()
+    predicted_class = (
+        predicted_class.item()
+    )
 
-    confidence = confidence.item() * 100
+    confidence = (
+        confidence.item() * 100
+    )
 
     top_probs = (
         top_probs[0]
@@ -529,16 +657,21 @@ def predict(model, image, prototypes):
         )
 
         closest_class = int(
-            np.argmax(similarities)
+            np.argmax(
+                similarities
+            )
         )
 
         similarity = float(
-            similarities[closest_class]
+            similarities[
+                closest_class
+            ]
         )
 
     is_known = (
         confidence >= CONFIDENCE_THRESHOLD
-        and similarity >= SIMILARITY_THRESHOLD
+        and
+        similarity >= SIMILARITY_THRESHOLD
     )
 
     return {
@@ -563,7 +696,7 @@ left_column, right_column = st.columns(
 
 
 # ============================================================
-# LEFT SIDE
+# LEFT COLUMN
 # ============================================================
 
 with left_column:
@@ -583,9 +716,11 @@ with left_column:
     st.html(
         """
         <div class="ts-card">
+
             <div class="ts-card-title">
                 📤 Upload Traffic Sign
             </div>
+
         </div>
         """
     )
@@ -601,6 +736,7 @@ with left_column:
     )
 
     image = None
+
     analyze_button = False
 
     if uploaded_file is not None:
@@ -628,7 +764,7 @@ with left_column:
 
 
 # ============================================================
-# RIGHT SIDE
+# RIGHT COLUMN
 # ============================================================
 
 with right_column:
@@ -655,10 +791,10 @@ with right_column:
                     🔎 Waiting for Image
                 </div>
 
-                <p>
+                <div>
                     Upload a traffic sign image on the left
                     to begin the inspection.
-                </p>
+                </div>
 
             </div>
             """
@@ -717,9 +853,10 @@ with right_column:
                 "is_known"
             ]
 
-            # ------------------------------------------------
-            # KNOWN SIGN
-            # ------------------------------------------------
+
+            # ==================================================
+            # RECOGNIZED SIGN
+            # ==================================================
 
             if is_known:
 
@@ -745,9 +882,10 @@ with right_column:
                     """
                 )
 
-            # ------------------------------------------------
+
+            # ==================================================
             # UNKNOWN SIGN
-            # ------------------------------------------------
+            # ==================================================
 
             else:
 
@@ -780,13 +918,14 @@ with right_column:
                     """
                 )
 
-            # ------------------------------------------------
+
+            # ==================================================
             # METRICS
-            # ------------------------------------------------
+            # ==================================================
 
-            metric_a, metric_b = st.columns(2)
+            metric_left, metric_right = st.columns(2)
 
-            with metric_a:
+            with metric_left:
 
                 st.metric(
                     "Model Confidence",
@@ -794,7 +933,7 @@ with right_column:
                     f"Threshold: {CONFIDENCE_THRESHOLD:.0f}%"
                 )
 
-            with metric_b:
+            with metric_right:
 
                 st.metric(
                     "Feature Similarity",
@@ -802,28 +941,33 @@ with right_column:
                     f"Threshold: {SIMILARITY_THRESHOLD:.4f}"
                 )
 
-            st.write("")
 
-            # ------------------------------------------------
-            # UNKNOWN DETAILS
-            # ------------------------------------------------
+            # ==================================================
+            # UNKNOWN DECISION DETAILS
+            # ==================================================
 
             if not is_known:
 
-                st.info(
-                    f"Final decision: NOT RECOGNIZED  |  "
-                    f"Similarity {similarity:.4f} < "
-                    f"{SIMILARITY_THRESHOLD:.4f}"
+                st.warning(
+                    f"Final decision: NOT RECOGNIZED — "
+                    f"feature similarity {similarity:.4f} "
+                    f"is below the required "
+                    f"{SIMILARITY_THRESHOLD:.4f} threshold."
                 )
 
-            # ------------------------------------------------
+
+            # ==================================================
             # TOP 5 PREDICTIONS
-            # ------------------------------------------------
+            # ==================================================
 
             st.html(
                 """
-                <div class="ts-card-title">
-                    🏆 Top 5 Predictions
+                <div class="ts-card">
+
+                    <div class="ts-card-title">
+                        🏆 Top 5 Predictions
+                    </div>
+
                 </div>
                 """
             )
@@ -853,6 +997,7 @@ with right_column:
                         1.0
                     )
                 )
+
 
         except Exception as error:
 
@@ -926,9 +1071,15 @@ with info4:
 st.html(
     """
     <div class="ts-footer">
-        <strong>Traffic Sign Recognition System</strong>
+
+        <strong>
+            Traffic Sign Recognition System
+        </strong>
+
         &nbsp; | &nbsp;
+
         Safer Roads. Smarter Technology.
+
     </div>
     """
 )
