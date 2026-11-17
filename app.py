@@ -24,7 +24,7 @@ st.set_page_config(
 
 
 # ============================================================
-# CONSTANTS
+# CONFIGURATION
 # ============================================================
 
 HF_REPO = "tanim4hmed/traffic-sign-recognizer-v2"
@@ -89,33 +89,26 @@ CLASS_NAMES = [
 
 
 # ============================================================
-# CUSTOM CSS
+# PROFESSIONAL UI STYLING
 # ============================================================
 
 st.markdown(
     """
     <style>
 
-    /* ------------------------------
-       GLOBAL
-    ------------------------------ */
-
+    /* Main background */
     .stApp {
-        background: #f4f6f9;
-        color: #152238;
+        background-color: #f4f6f9;
     }
 
+    /* Main width */
     .block-container {
         max-width: 1450px;
-        padding-top: 1rem;
+        padding-top: 1.5rem;
         padding-bottom: 2rem;
     }
 
-    header[data-testid="stHeader"] {
-        background: transparent;
-    }
-
-    /* Hide Streamlit default menu */
+    /* Hide Streamlit branding */
     #MainMenu {
         visibility: hidden;
     }
@@ -124,464 +117,157 @@ st.markdown(
         visibility: hidden;
     }
 
-
-    /* ------------------------------
-       HEADER
-    ------------------------------ */
-
-    .site-header {
-        background: #102a43;
-        border-radius: 0 0 16px 16px;
-        padding: 20px 28px;
-        margin-bottom: 18px;
+    /* Header */
+    .main-header {
+        background-color: #102a43;
+        padding: 22px 28px;
+        border-radius: 14px;
+        margin-bottom: 20px;
         color: white;
-        box-shadow: 0 5px 18px rgba(15, 35, 60, 0.15);
+        box-shadow: 0 5px 18px rgba(0, 0, 0, 0.12);
     }
 
-    .brand-row {
-        display: flex;
-        align-items: center;
-        gap: 18px;
-    }
-
-    .brand-icon {
-        width: 62px;
-        height: 62px;
-        background: #e52b32;
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 35px;
-        flex-shrink: 0;
-    }
-
-    .brand-title {
-        font-size: 28px;
+    .header-title {
+        font-size: 30px;
         font-weight: 800;
-        line-height: 1.1;
         margin: 0;
     }
 
-    .brand-subtitle {
+    .header-subtitle {
+        color: #d8e3ed;
         font-size: 14px;
-        color: #d7e2ee;
-        margin-top: 7px;
+        margin-top: 5px;
     }
 
-    .online-status {
-        margin-left: auto;
-        background: rgba(31, 170, 89, 0.18);
-        border: 1px solid rgba(90, 220, 130, 0.35);
-        color: #63df91;
-        border-radius: 30px;
-        padding: 8px 15px;
-        font-size: 13px;
-        font-weight: 700;
-        white-space: nowrap;
-    }
-
-    .online-dot {
-        display: inline-block;
-        width: 8px;
-        height: 8px;
-        background: #35d779;
-        border-radius: 50%;
-        margin-right: 7px;
-    }
-
-
-    /* ------------------------------
-       HERO
-    ------------------------------ */
-
-    .hero {
-        position: relative;
-        overflow: hidden;
-        min-height: 250px;
-        border-radius: 16px;
-        margin-bottom: 22px;
-        background:
-            linear-gradient(
-                90deg,
-                rgba(7, 25, 44, 0.96) 0%,
-                rgba(7, 25, 44, 0.86) 42%,
-                rgba(7, 25, 44, 0.30) 100%
-            ),
-            linear-gradient(
-                135deg,
-                #173d60 0%,
-                #294f69 50%,
-                #7a8d91 100%
-            );
-        box-shadow: 0 7px 22px rgba(20, 42, 66, 0.15);
-    }
-
-    .hero-road {
-        position: absolute;
-        right: -30px;
-        bottom: -90px;
-        width: 60%;
-        height: 220px;
-        transform: rotate(-4deg);
-        background:
-            linear-gradient(
-                90deg,
-                transparent 0%,
-                rgba(255,255,255,0.8) 48%,
-                transparent 50%
-            );
-        opacity: 0.18;
-    }
-
-    .hero-content {
-        position: relative;
-        z-index: 2;
+    /* Hero */
+    .hero-box {
+        background: linear-gradient(
+            110deg,
+            #0c263f 0%,
+            #173d60 55%,
+            #31546a 100%
+        );
         padding: 38px 42px;
-        max-width: 700px;
+        border-radius: 15px;
+        margin-bottom: 25px;
+        color: white;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.13);
     }
 
-    .hero-label {
+    .hero-small {
         display: inline-block;
-        background: #e52b32;
-        color: white;
-        padding: 7px 12px;
+        background-color: #e52b32;
+        padding: 6px 12px;
         border-radius: 4px;
         font-size: 12px;
         font-weight: 800;
-        letter-spacing: 0.8px;
-        margin-bottom: 13px;
+        letter-spacing: 0.5px;
     }
 
     .hero-title {
-        color: white;
-        font-size: 43px;
+        font-size: 40px;
         font-weight: 850;
-        margin: 0;
-        line-height: 1.05;
+        margin-top: 12px;
+        margin-bottom: 8px;
     }
 
-    .hero-text {
-        color: #e6edf4;
+    .hero-description {
+        color: #e1e9f0;
         font-size: 16px;
-        margin-top: 14px;
+        max-width: 680px;
         line-height: 1.55;
-        max-width: 600px;
     }
 
-
-    /* ------------------------------
-       SECTION TITLES
-    ------------------------------ */
-
-    .section-heading {
-        color: #152238;
-        font-size: 22px;
+    /* Section title */
+    .section-title {
+        font-size: 23px;
         font-weight: 800;
-        margin: 6px 0 4px 0;
+        color: #152238;
+        margin-top: 5px;
+        margin-bottom: 3px;
     }
 
-    .section-description {
-        color: #64748b;
+    .section-text {
+        color: #68788a;
         font-size: 14px;
         margin-bottom: 15px;
     }
 
-
-    /* ------------------------------
-       CARDS
-    ------------------------------ */
-
-    .panel {
-        background: white;
+    /* Cards */
+    .card {
+        background-color: white;
         border: 1px solid #dce3ea;
-        border-radius: 14px;
-        box-shadow: 0 4px 15px rgba(20, 42, 66, 0.07);
-        overflow: hidden;
-    }
-
-    .panel-header {
-        background: #17385d;
-        color: white;
-        padding: 15px 19px;
-        font-size: 18px;
-        font-weight: 750;
-    }
-
-    .panel-body {
+        border-radius: 13px;
         padding: 20px;
+        box-shadow: 0 4px 15px rgba(20, 42, 66, 0.06);
     }
 
-
-    /* ------------------------------
-       UPLOAD AREA
-    ------------------------------ */
-
-    .upload-title {
-        color: #152238;
-        font-size: 20px;
+    .card-title {
+        color: #17385d;
+        font-size: 19px;
         font-weight: 800;
-        margin-bottom: 4px;
+        margin-bottom: 12px;
     }
 
-    .upload-subtitle {
-        color: #718096;
-        font-size: 13px;
-        margin-bottom: 18px;
-    }
-
-    [data-testid="stFileUploader"] {
-        background: #f8fafc;
-        border: 2px dashed #b7c5d5;
-        border-radius: 12px;
-        padding: 8px;
-    }
-
-    [data-testid="stFileUploader"]:hover {
-        border-color: #e52b32;
-    }
-
-    .image-caption {
-        color: #43556b;
-        font-size: 14px;
-        font-weight: 750;
-        margin-top: 17px;
-        margin-bottom: 8px;
-    }
-
-
-    /* ------------------------------
-       RESULT STATUS
-    ------------------------------ */
-
-    .status-known {
-        background: #eaf8ef;
-        border: 1px solid #bde7ca;
-        border-left: 5px solid #21a45a;
-        border-radius: 10px;
-        padding: 17px 18px;
-        margin-bottom: 18px;
-    }
-
-    .status-unknown {
-        background: #fff1f1;
-        border: 1px solid #f2c5c7;
-        border-left: 5px solid #e52b32;
-        border-radius: 10px;
-        padding: 17px 18px;
-        margin-bottom: 18px;
-    }
-
-    .status-label {
-        font-size: 12px;
-        font-weight: 850;
-        letter-spacing: 0.7px;
-        margin-bottom: 5px;
-    }
-
-    .status-label-known {
-        color: #168045;
-    }
-
-    .status-label-unknown {
-        color: #c5232b;
-    }
-
-    .result-name {
+    /* Result heading */
+    .result-title {
         color: #152238;
-        font-size: 27px;
+        font-size: 25px;
         font-weight: 850;
-        margin-top: 4px;
-        margin-bottom: 5px;
     }
 
-    .result-description {
-        color: #5e6f82;
+    .result-subtitle {
+        color: #64748b;
         font-size: 14px;
         line-height: 1.5;
     }
 
-
-    /* ------------------------------
-       METRICS
-    ------------------------------ */
-
-    .metric-card {
-        background: #f8fafc;
-        border: 1px solid #dbe3eb;
-        border-radius: 11px;
-        padding: 17px;
-        height: 100%;
-    }
-
-    .metric-label {
-        color: #617287;
-        font-size: 12px;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.4px;
-    }
-
-    .metric-value {
-        color: #152238;
-        font-size: 27px;
-        font-weight: 850;
-        margin-top: 4px;
-    }
-
-    .metric-note {
-        color: #7b8998;
-        font-size: 11px;
-        margin-top: 3px;
-    }
-
-
-    /* ------------------------------
-       PREDICTIONS
-    ------------------------------ */
-
-    .prediction-row {
-        margin-bottom: 14px;
-    }
-
-    .prediction-name {
-        color: #27364a;
-        font-size: 13px;
-        font-weight: 650;
-        margin-bottom: 5px;
-    }
-
-    .prediction-track {
-        height: 9px;
-        background: #e6ebf1;
-        border-radius: 20px;
-        overflow: hidden;
-    }
-
-    .prediction-fill {
-        height: 100%;
-        background: #2469c8;
-        border-radius: 20px;
-    }
-
-    .prediction-fill-top {
-        background: #e52b32;
-    }
-
-    .prediction-percent {
-        color: #152238;
-        font-size: 13px;
-        font-weight: 800;
-        text-align: right;
-    }
-
-
-    /* ------------------------------
-       SYSTEM INFO
-    ------------------------------ */
-
-    .info-card {
-        background: white;
+    /* Metric styling */
+    [data-testid="stMetric"] {
+        background-color: #f8fafc;
         border: 1px solid #dce3ea;
-        border-radius: 14px;
-        padding: 19px;
-        box-shadow: 0 4px 15px rgba(20, 42, 66, 0.06);
+        border-radius: 10px;
+        padding: 14px;
     }
 
-    .info-label {
-        color: #7a8898;
-        font-size: 11px;
-        font-weight: 800;
-        text-transform: uppercase;
-        letter-spacing: 0.7px;
+    [data-testid="stMetricLabel"] {
+        color: #64748b !important;
     }
 
-    .info-value {
-        color: #152238;
-        font-size: 16px;
-        font-weight: 800;
-        margin-top: 5px;
+    [data-testid="stMetricValue"] {
+        color: #152238 !important;
     }
 
-
-    /* ------------------------------
-       BUTTON
-    ------------------------------ */
-
+    /* Buttons */
     .stButton > button {
-        width: 100%;
-        border-radius: 9px;
-        border: none;
-        background: #e52b32;
+        background-color: #e52b32;
         color: white;
-        font-size: 15px;
+        border: none;
+        border-radius: 8px;
         font-weight: 800;
-        padding: 12px 20px;
-        min-height: 46px;
-        box-shadow: 0 4px 10px rgba(229, 43, 50, 0.22);
-        transition: all 0.18s ease;
+        min-height: 45px;
     }
 
     .stButton > button:hover {
-        background: #c92128;
-        transform: translateY(-1px);
-        box-shadow: 0 6px 14px rgba(229, 43, 50, 0.28);
-    }
-
-
-    /* ------------------------------
-       FOOTER
-    ------------------------------ */
-
-    .footer {
-        margin-top: 30px;
-        background: #102a43;
-        color: #dce7f1;
-        border-radius: 13px;
-        padding: 18px 24px;
-        text-align: center;
-        font-size: 13px;
-    }
-
-    .footer strong {
+        background-color: #c92128;
         color: white;
     }
 
-    .footer-red {
-        color: #f15b61;
-        font-weight: 800;
+    /* File uploader */
+    [data-testid="stFileUploader"] {
+        background-color: #f8fafc;
+        border-radius: 10px;
     }
 
-
-    /* ------------------------------
-       MOBILE
-    ------------------------------ */
-
-    @media (max-width: 800px) {
-
-        .brand-title {
-            font-size: 21px;
-        }
-
-        .brand-subtitle {
-            font-size: 12px;
-        }
-
-        .online-status {
-            display: none;
-        }
-
-        .hero-content {
-            padding: 30px 25px;
-        }
-
-        .hero-title {
-            font-size: 31px;
-        }
-
-        .hero-text {
-            font-size: 14px;
-        }
+    /* Footer */
+    .footer-box {
+        background-color: #102a43;
+        color: #dbe5ee;
+        text-align: center;
+        padding: 17px;
+        border-radius: 12px;
+        margin-top: 30px;
+        font-size: 13px;
     }
 
     </style>
@@ -594,31 +280,25 @@ st.markdown(
 # HEADER
 # ============================================================
 
-st.markdown(
-    """
-    <div class="site-header">
-        <div class="brand-row">
-            <div class="brand-icon">🚦</div>
+header_left, header_right = st.columns([5, 1])
 
-            <div>
-                <div class="brand-title">
-                    Traffic Sign Recognition System
-                </div>
-
-                <div class="brand-subtitle">
-                    Road sign identification and classification system
-                </div>
+with header_left:
+    st.markdown(
+        """
+        <div class="main-header">
+            <div class="header-title">
+                🚦 Traffic Sign Recognition System
             </div>
-
-            <div class="online-status">
-                <span class="online-dot"></span>
-                System Online
+            <div class="header-subtitle">
+                Road sign identification and classification system
             </div>
         </div>
-    </div>
-    """,
-    unsafe_allow_html=True
-)
+        """,
+        unsafe_allow_html=True
+    )
+
+with header_right:
+    st.success("● System Online")
 
 
 # ============================================================
@@ -627,26 +307,20 @@ st.markdown(
 
 st.markdown(
     """
-    <div class="hero">
+    <div class="hero-box">
 
-        <div class="hero-road"></div>
+        <div class="hero-small">
+            TRAFFIC SAFETY SYSTEM
+        </div>
 
-        <div class="hero-content">
+        <div class="hero-title">
+            Traffic Sign Inspection
+        </div>
 
-            <div class="hero-label">
-                TRAFFIC SAFETY SYSTEM
-            </div>
-
-            <div class="hero-title">
-                Traffic Sign Inspection
-            </div>
-
-            <div class="hero-text">
-                Upload a traffic sign image and identify its
-                classification using our trained road-sign
-                recognition model.
-            </div>
-
+        <div class="hero-description">
+            Upload a traffic sign image and identify its classification
+            using a trained ResNet18 recognition model with unknown-sign
+            detection.
         </div>
 
     </div>
@@ -656,7 +330,7 @@ st.markdown(
 
 
 # ============================================================
-# MODEL LOADING
+# MODEL
 # ============================================================
 
 @st.cache_resource(show_spinner=False)
@@ -669,7 +343,11 @@ def load_model():
     )
 
     model = resnet18(weights=None)
-    model.fc = nn.Linear(model.fc.in_features, 43)
+
+    model.fc = nn.Linear(
+        model.fc.in_features,
+        43
+    )
 
     state_dict = torch.load(
         model_path,
@@ -678,25 +356,25 @@ def load_model():
     )
 
     model.load_state_dict(state_dict)
+
     model = model.to(DEVICE)
+
     model.eval()
 
     return model
 
 
 # ============================================================
-# PROTOTYPE LOADING
+# PROTOTYPES
 # ============================================================
 
 @st.cache_data(show_spinner=False)
 def load_prototypes():
 
-    path = PROTOTYPE_FILE
-
-    if not os.path.exists(path):
+    if not os.path.exists(PROTOTYPE_FILE):
         return None
 
-    data = np.load(path)
+    data = np.load(PROTOTYPE_FILE)
 
     return data["prototypes"]
 
@@ -734,7 +412,11 @@ def extract_feature(model, image_tensor):
     x = model.avgpool(x)
     x = torch.flatten(x, 1)
 
-    x = F.normalize(x, p=2, dim=1)
+    x = F.normalize(
+        x,
+        p=2,
+        dim=1
+    )
 
     return x
 
@@ -745,13 +427,18 @@ def extract_feature(model, image_tensor):
 
 def predict(model, image, prototypes):
 
-    image_tensor = transform(image).unsqueeze(0).to(DEVICE)
+    image_tensor = transform(
+        image
+    ).unsqueeze(0).to(DEVICE)
 
     with torch.no_grad():
 
         outputs = model(image_tensor)
 
-        probabilities = torch.softmax(outputs, dim=1)
+        probabilities = torch.softmax(
+            outputs,
+            dim=1
+        )
 
         confidence, predicted_class = torch.max(
             probabilities,
@@ -770,21 +457,34 @@ def predict(model, image, prototypes):
         )
 
     predicted_class = predicted_class.item()
-    confidence = confidence.item() * 100
 
-    top_probs = top_probs[0].cpu().numpy() * 100
-    top_classes = top_classes[0].cpu().numpy()
+    confidence = (
+        confidence.item() * 100
+    )
 
-    # ----------------------------------------
-    # Prototype similarity
-    # ----------------------------------------
+    top_probs = (
+        top_probs[0]
+        .cpu()
+        .numpy() * 100
+    )
+
+    top_classes = (
+        top_classes[0]
+        .cpu()
+        .numpy()
+    )
 
     similarity = 0.0
+
     closest_class = predicted_class
 
     if prototypes is not None:
 
-        feature_np = feature[0].cpu().numpy()
+        feature_np = (
+            feature[0]
+            .cpu()
+            .numpy()
+        )
 
         similarities = np.dot(
             prototypes,
@@ -798,10 +498,6 @@ def predict(model, image, prototypes):
         similarity = float(
             similarities[closest_class]
         )
-
-    # ----------------------------------------
-    # Final decision
-    # ----------------------------------------
 
     is_known = (
         confidence >= CONFIDENCE_THRESHOLD
@@ -820,131 +516,101 @@ def predict(model, image, prototypes):
 
 
 # ============================================================
-# MAIN CONTENT
+# MAIN SECTION
 # ============================================================
 
-left_col, right_col = st.columns(
-    [0.9, 1.1],
+left, right = st.columns(
+    [0.95, 1.05],
     gap="large"
 )
 
 
 # ============================================================
-# LEFT: IMAGE UPLOAD
+# LEFT COLUMN - UPLOAD
 # ============================================================
 
-with left_col:
+with left:
 
     st.markdown(
-        '<div class="section-heading">Traffic Sign Inspection</div>',
+        '<div class="section-title">Traffic Sign Inspection</div>',
         unsafe_allow_html=True
     )
 
     st.markdown(
-        '<div class="section-description">'
-        'Upload a clear image of a road traffic sign for analysis.'
+        '<div class="section-text">'
+        'Upload a clear image of a road traffic sign.'
         '</div>',
         unsafe_allow_html=True
     )
 
     st.markdown(
-        '<div class="panel">',
+        '<div class="card">',
         unsafe_allow_html=True
     )
 
     st.markdown(
-        '<div class="panel-header">📤 Upload Traffic Sign</div>',
-        unsafe_allow_html=True
-    )
-
-    st.markdown(
-        '<div class="panel-body">',
+        '<div class="card-title">📤 Upload Traffic Sign</div>',
         unsafe_allow_html=True
     )
 
     uploaded_file = st.file_uploader(
-        "Choose an image",
+        "Select image",
         type=["jpg", "jpeg", "png"],
         label_visibility="collapsed"
     )
 
+    image = None
+
     if uploaded_file is not None:
 
-        image = Image.open(uploaded_file).convert("RGB")
+        image = Image.open(
+            uploaded_file
+        ).convert("RGB")
 
-        st.markdown(
-            '<div class="image-caption">Uploaded Image</div>',
-            unsafe_allow_html=True
-        )
+        st.write("")
 
         st.image(
             image,
+            caption="Uploaded Traffic Sign",
             use_container_width=True
         )
 
-        st.markdown(
-            "<div style='height:10px'></div>",
-            unsafe_allow_html=True
-        )
+        st.write("")
 
-        recognize = st.button(
+        analyze_button = st.button(
             "🔍 Analyze Traffic Sign",
             use_container_width=True
         )
 
     else:
 
-        st.markdown(
-            """
-            <div style="
-                text-align:center;
-                padding:42px 15px 35px 15px;
-                color:#6d7c8e;
-            ">
-                <div style="font-size:48px;">🛣️</div>
-
-                <div style="
-                    font-size:18px;
-                    font-weight:800;
-                    color:#30445c;
-                    margin-top:10px;
-                ">
-                    Upload a traffic sign image
-                </div>
-
-                <div style="
-                    font-size:13px;
-                    margin-top:7px;
-                ">
-                    JPG, JPEG or PNG
-                </div>
-            </div>
-            """,
-            unsafe_allow_html=True
+        st.info(
+            "📷 Upload a JPG, JPEG, or PNG image "
+            "to begin traffic sign inspection."
         )
 
-        recognize = False
+        analyze_button = False
 
     st.markdown(
-        '</div></div>',
+        '</div>',
         unsafe_allow_html=True
     )
 
 
 # ============================================================
-# RIGHT: DETECTION RESULT
+# RIGHT COLUMN - RESULT
 # ============================================================
 
-with right_col:
+with right:
 
     st.markdown(
-        '<div class="section-heading">Detection Result</div>',
+        '<div class="section-title">Detection Result</div>',
         unsafe_allow_html=True
     )
 
     st.markdown(
-        '<div class="section-description">'
-        'Classification and recognition analysis will appear here.'
+        '<div class="section-text">'
+        'Classification and recognition analysis.'
         '</div>',
         unsafe_allow_html=True
     )
@@ -952,57 +618,59 @@ with right_col:
     if uploaded_file is None:
 
         st.markdown(
-            """
-            <div class="panel">
-                <div class="panel-header">
-                    📊 Detection Result
-                </div>
-
-                <div class="panel-body">
-
-                    <div style="
-                        text-align:center;
-                        padding:75px 20px;
-                        color:#738398;
-                    ">
-
-                        <div style="
-                            font-size:52px;
-                            margin-bottom:12px;
-                        ">
-                            🔎
-                        </div>
-
-                        <div style="
-                            color:#30445c;
-                            font-size:19px;
-                            font-weight:800;
-                        ">
-                            Waiting for image
-                        </div>
-
-                        <div style="
-                            margin-top:8px;
-                            font-size:13px;
-                        ">
-                            Upload a traffic sign to begin inspection.
-                        </div>
-
-                    </div>
-
-                </div>
-            </div>
-            """,
+            '<div class="card">',
             unsafe_allow_html=True
         )
 
-    elif recognize:
+        st.info(
+            "🔎 Waiting for an image. "
+            "Upload a traffic sign on the left."
+        )
+
+        st.markdown(
+            """
+            **Recognition workflow**
+
+            1. Upload a traffic sign image
+            2. Analyze the image
+            3. Compare model predictions
+            4. Check feature similarity
+            5. Return a recognized or unknown result
+            """
+        )
+
+        st.markdown(
+            '</div>',
+            unsafe_allow_html=True
+        )
+
+    elif not analyze_button:
+
+        st.markdown(
+            '<div class="card">',
+            unsafe_allow_html=True
+        )
+
+        st.info(
+            "Image uploaded successfully. "
+            "Click **Analyze Traffic Sign** to start."
+        )
+
+        st.markdown(
+            '</div>',
+            unsafe_allow_html=True
+        )
+
+    else:
 
         try:
 
-            with st.spinner("Analyzing traffic sign..."):
+            with st.spinner(
+                "Analyzing traffic sign..."
+            ):
 
                 model = load_model()
+
                 prototypes = load_prototypes()
 
                 result = predict(
@@ -1011,305 +679,205 @@ with right_col:
                     prototypes
                 )
 
-            predicted_class = result["predicted_class"]
-            confidence = result["confidence"]
-            similarity = result["similarity"]
+            predicted_class = result[
+                "predicted_class"
+            ]
 
-            top_classes = result["top_classes"]
-            top_probs = result["top_probs"]
+            confidence = result[
+                "confidence"
+            ]
 
-            is_known = result["is_known"]
+            similarity = result[
+                "similarity"
+            ]
 
-            # ----------------------------------------
-            # RESULT PANEL
-            # ----------------------------------------
+            closest_class = result[
+                "closest_class"
+            ]
 
-            st.markdown(
-                '<div class="panel">',
-                unsafe_allow_html=True
-            )
+            top_classes = result[
+                "top_classes"
+            ]
 
-            st.markdown(
-                '<div class="panel-header">'
-                '📊 Detection Result'
-                '</div>',
-                unsafe_allow_html=True
-            )
+            top_probs = result[
+                "top_probs"
+            ]
 
-            st.markdown(
-                '<div class="panel-body">',
-                unsafe_allow_html=True
-            )
+            is_known = result[
+                "is_known"
+            ]
 
-            # ----------------------------------------
-            # KNOWN RESULT
-            # ----------------------------------------
+            # ------------------------------------------------
+            # KNOWN SIGN
+            # ------------------------------------------------
 
             if is_known:
 
+                st.success(
+                    "✓ RECOGNIZED TRAFFIC SIGN"
+                )
+
                 st.markdown(
                     f"""
-                    <div class="status-known">
+                    <div class="card">
 
-                        <div class="status-label status-label-known">
-                            ✓ RECOGNIZED TRAFFIC SIGN
-                        </div>
+                    <div class="result-title">
+                        {CLASS_NAMES[predicted_class]}
+                    </div>
 
-                        <div class="result-name">
-                            {CLASS_NAMES[predicted_class]}
-                        </div>
-
-                        <div class="result-description">
-                            The uploaded sign matches one of the
-                            supported GTSRB traffic sign classes.
-                        </div>
+                    <div class="result-subtitle">
+                        The uploaded sign matches one of the
+                        supported GTSRB traffic sign classes.
+                    </div>
 
                     </div>
                     """,
                     unsafe_allow_html=True
                 )
 
-            # ----------------------------------------
-            # UNKNOWN RESULT
-            # ----------------------------------------
+            # ------------------------------------------------
+            # UNKNOWN SIGN
+            # ------------------------------------------------
 
             else:
 
                 closest_name = CLASS_NAMES[
-                    result["closest_class"]
+                    closest_class
                 ]
 
+                st.warning(
+                    "⚠ UNKNOWN TRAFFIC SIGN"
+                )
+
                 st.markdown(
                     f"""
-                    <div class="status-unknown">
+                    <div class="card">
 
-                        <div class="status-label status-label-unknown">
-                            ⚠ UNKNOWN TRAFFIC SIGN
-                        </div>
+                    <div class="result-title">
+                        Sign Not Recognized
+                    </div>
 
-                        <div class="result-name">
-                            Sign Not Recognized
-                        </div>
+                    <div class="result-subtitle">
 
-                        <div class="result-description">
-                            This sign could not be confidently
-                            matched with one of the 43 supported
-                            GTSRB traffic sign classes.
-                            <br><br>
-                            The model's highest prediction was
-                            <strong>{closest_name}</strong>,
-                            but the feature similarity was below
-                            the required recognition threshold.
-                        </div>
+                        This sign could not be confidently
+                        matched with one of the 43 supported
+                        GTSRB traffic sign classes.
+
+                        <br><br>
+
+                        The model's highest prediction was
+                        <strong>{closest_name}</strong>,
+                        but the feature similarity was below
+                        the required recognition threshold.
+
+                    </div>
 
                     </div>
                     """,
                     unsafe_allow_html=True
                 )
 
-            # ----------------------------------------
+            st.write("")
+
+            # ------------------------------------------------
             # METRICS
-            # ----------------------------------------
+            # ------------------------------------------------
 
-            metric1, metric2 = st.columns(2)
+            m1, m2 = st.columns(2)
 
-            with metric1:
+            with m1:
 
-                st.markdown(
-                    f"""
-                    <div class="metric-card">
-
-                        <div class="metric-label">
-                            Model Confidence
-                        </div>
-
-                        <div class="metric-value">
-                            {confidence:.2f}%
-                        </div>
-
-                        <div class="metric-note">
-                            Required: {CONFIDENCE_THRESHOLD:.0f}%
-                        </div>
-
-                    </div>
-                    """,
-                    unsafe_allow_html=True
+                st.metric(
+                    "Model Confidence",
+                    f"{confidence:.2f}%",
+                    f"Required {CONFIDENCE_THRESHOLD:.0f}%"
                 )
 
-            with metric2:
+            with m2:
 
-                st.markdown(
-                    f"""
-                    <div class="metric-card">
-
-                        <div class="metric-label">
-                            Feature Similarity
-                        </div>
-
-                        <div class="metric-value">
-                            {similarity:.4f}
-                        </div>
-
-                        <div class="metric-note">
-                            Required: {SIMILARITY_THRESHOLD:.4f}
-                        </div>
-
-                    </div>
-                    """,
-                    unsafe_allow_html=True
+                st.metric(
+                    "Feature Similarity",
+                    f"{similarity:.4f}",
+                    f"Required {SIMILARITY_THRESHOLD:.4f}"
                 )
+
+            st.write("")
+
+            # ------------------------------------------------
+            # TOP 5 PREDICTIONS
+            # ------------------------------------------------
 
             st.markdown(
-                "<div style='height:22px'></div>",
+                '<div class="card">',
                 unsafe_allow_html=True
             )
 
-            # ----------------------------------------
-            # TOP 5
-            # ----------------------------------------
-
             st.markdown(
-                """
-                <div style="
-                    color:#152238;
-                    font-size:19px;
-                    font-weight:800;
-                    margin-bottom:15px;
-                ">
-                    🏆 Top 5 Predictions
-                </div>
-                """,
+                '<div class="card-title">'
+                '🏆 Top 5 Predictions'
+                '</div>',
                 unsafe_allow_html=True
             )
 
             for i in range(5):
 
-                class_id = int(top_classes[i])
-                probability = float(top_probs[i])
-
-                name = CLASS_NAMES[class_id]
-
-                width = max(
-                    min(probability, 100),
-                    0
+                class_id = int(
+                    top_classes[i]
                 )
 
-                fill_class = (
-                    "prediction-fill-top"
-                    if i == 0
-                    else "prediction-fill"
+                probability = float(
+                    top_probs[i]
                 )
 
-                st.markdown(
-                    f"""
-                    <div class="prediction-row">
+                name = CLASS_NAMES[
+                    class_id
+                ]
 
-                        <div style="
-                            display:flex;
-                            justify-content:space-between;
-                            align-items:center;
-                            gap:10px;
-                        ">
+                st.write(
+                    f"**{i + 1}. {name}**"
+                )
 
-                            <div class="prediction-name">
-                                {i + 1}. {name}
-                            </div>
-
-                            <div class="prediction-percent">
-                                {probability:.2f}%
-                            </div>
-
-                        </div>
-
-                        <div class="prediction-track">
-
-                            <div
-                                class="{fill_class}"
-                                style="width:{width}%"
-                            ></div>
-
-                        </div>
-
-                    </div>
-                    """,
-                    unsafe_allow_html=True
+                st.progress(
+                    min(
+                        probability / 100,
+                        1.0
+                    ),
+                    text=f"{probability:.2f}%"
                 )
 
             st.markdown(
-                '</div></div>',
+                '</div>',
                 unsafe_allow_html=True
             )
 
-        except Exception as e:
+        except Exception as error:
 
             st.error(
                 "An error occurred while analyzing the image."
             )
 
-            st.code(str(e))
-
-    else:
-
-        st.markdown(
-            """
-            <div class="panel">
-                <div class="panel-header">
-                    📊 Detection Result
-                </div>
-
-                <div class="panel-body">
-
-                    <div style="
-                        text-align:center;
-                        padding:55px 20px;
-                        color:#738398;
-                    ">
-
-                        <div style="font-size:45px;">
-                            ✓
-                        </div>
-
-                        <div style="
-                            color:#30445c;
-                            font-size:18px;
-                            font-weight:800;
-                            margin-top:10px;
-                        ">
-                            Image ready for analysis
-                        </div>
-
-                        <div style="
-                            font-size:13px;
-                            margin-top:7px;
-                        ">
-                            Click "Analyze Traffic Sign" to continue.
-                        </div>
-
-                    </div>
-
-                </div>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
+            with st.expander(
+                "Technical details"
+            ):
+                st.code(
+                    str(error)
+                )
 
 
 # ============================================================
 # SYSTEM INFORMATION
 # ============================================================
 
+st.write("")
+st.write("")
+
 st.markdown(
-    "<div style='height:25px'></div>",
+    '<div class="section-title">System Information</div>',
     unsafe_allow_html=True
 )
 
 st.markdown(
-    '<div class="section-heading">System Information</div>',
-    unsafe_allow_html=True
-)
-
-st.markdown(
-    '<div class="section-description">'
+    '<div class="section-text">'
     'Technical information about the recognition system.'
     '</div>',
     unsafe_allow_html=True
@@ -1319,79 +887,30 @@ info1, info2, info3, info4 = st.columns(4)
 
 with info1:
 
-    st.markdown(
-        """
-        <div class="info-card">
-
-            <div class="info-label">
-                Model
-            </div>
-
-            <div class="info-value">
-                ResNet18
-            </div>
-
-        </div>
-        """,
-        unsafe_allow_html=True
+    st.metric(
+        "Model",
+        "ResNet18"
     )
 
 with info2:
 
-    st.markdown(
-        """
-        <div class="info-card">
-
-            <div class="info-label">
-                Dataset
-            </div>
-
-            <div class="info-value">
-                GTSRB
-            </div>
-
-        </div>
-        """,
-        unsafe_allow_html=True
+    st.metric(
+        "Dataset",
+        "GTSRB"
     )
 
 with info3:
 
-    st.markdown(
-        """
-        <div class="info-card">
-
-            <div class="info-label">
-                Supported Classes
-            </div>
-
-            <div class="info-value">
-                43
-            </div>
-
-        </div>
-        """,
-        unsafe_allow_html=True
+    st.metric(
+        "Classes",
+        "43"
     )
 
 with info4:
 
-    st.markdown(
-        """
-        <div class="info-card">
-
-            <div class="info-label">
-                System Status
-            </div>
-
-            <div class="info-value"
-                 style="color:#1c9a50;">
-                ● Ready
-            </div>
-
-        </div>
-        """,
-        unsafe_allow_html=True
+    st.metric(
+        "Status",
+        "Ready"
     )
 
 
@@ -1401,17 +920,13 @@ with info4:
 
 st.markdown(
     """
-    <div class="footer">
+    <div class="footer-box">
 
         <strong>Traffic Sign Recognition System</strong>
 
-        &nbsp;&nbsp;|&nbsp;&nbsp;
+        &nbsp; | &nbsp;
 
-        <span class="footer-red">
-            Safer Roads.
-        </span>
-
-        Smarter Technology.
+        Safer Roads. Smarter Technology.
 
     </div>
     """,
